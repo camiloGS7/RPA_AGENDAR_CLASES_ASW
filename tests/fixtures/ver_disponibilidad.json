@@ -1,0 +1,35 @@
+{
+  "tema": {
+    "id": 2563, "curso_id": 17, "nombre": "1-2-3  / UNIT 1", "orden": 5,
+    "tipo_clase": "regular", "tipo": "regular_17", "programable": 1, "activo": 1,
+    "unidad": "UNIT 1", "class_topic": "Warm Up: Getting to know you"
+  },
+  "horarios": [
+    {
+      "fecha": "2026-11-10", "texto": "Martes 10 de Noviembre", "dia_semana": 2,
+      "timestamp": 1794336675261, "date": "2026-11-10T18:51:15.261Z",
+      "horas": [
+        {"id": 1, "nombre": "6:00 am - 7:30 am", "hora": "06:00:00", "nombre_corto": "6:00am", "marca_tiempo": "2026-11-10T06:00:00", "timestamp": 1794308400000, "politica_cancel": "Esta clase ya no es posible cancelarla.", "disponible": 18},
+        {"id": 2, "nombre": "7:30 am - 9:00 am", "hora": "07:30:00", "nombre_corto": "7:30am", "marca_tiempo": "2026-11-10T07:30:00", "timestamp": 1794313800000, "politica_cancel": "Esta clase ya no es posible cancelarla.", "disponible": 15},
+        {"id": 3, "nombre": "9:00 am - 10:30 am", "hora": "09:00:00", "nombre_corto": "9:00am", "marca_tiempo": "2026-11-10T09:00:00", "timestamp": 1794319200000, "politica_cancel": "Esta clase ya no es posible cancelarla.", "disponible": 24},
+        {"id": 4, "nombre": "10:30 am - 12:00 pm", "hora": "10:30:00", "nombre_corto": "10:30am", "marca_tiempo": "2026-11-10T10:30:00", "timestamp": 1794324600000, "politica_cancel": "Esta clase ya no es posible cancelarla.", "disponible": 34},
+        {"id": 5, "nombre": "12:00 pm - 1:30 pm", "hora": "12:00:00", "nombre_corto": "12:00pm", "marca_tiempo": "2026-11-10T12:00:00", "timestamp": 1794330000000, "politica_cancel": "Esta clase ya no es posible cancelarla.", "disponible": 24},
+        {"id": 6, "nombre": "1:30 pm - 3:00 pm", "hora": "13:30:00", "nombre_corto": "1:30pm", "marca_tiempo": "2026-11-10T13:30:00", "timestamp": 1794335400000, "politica_cancel": "Esta clase ya no es posible cancelarla.", "disponible": 6},
+        {"id": 7, "nombre": "3:00 pm - 4:30 pm", "hora": "15:00:00", "nombre_corto": "3:00pm", "marca_tiempo": "2026-11-10T15:00:00", "timestamp": 1794340800000, "politica_cancel": "Recuerda que debes cancelar con mínimo 24 horas…", "disponible": 3},
+        {"id": 8, "nombre": "4:30 pm - 6:00 pm", "hora": "16:30:00", "nombre_corto": "4:30pm", "marca_tiempo": "2026-11-10T16:30:00", "timestamp": 1794346200000, "politica_cancel": "Recuerda que debes cancelar con mínimo 24 horas…", "disponible": 41},
+        {"id": 9, "nombre": "6:00 pm - 7:30 pm", "hora": "18:00:00", "nombre_corto": "6:00pm", "marca_tiempo": "2026-11-10T18:00:00", "timestamp": 1794351600000, "politica_cancel": "Recuerda que debes cancelar con mínimo 24 horas…", "disponible": 36},
+        {"id": 10, "nombre": "7:30 pm - 9:00 pm", "hora": "19:30:00", "nombre_corto": "7:30pm", "marca_tiempo": "2026-11-10T19:30:00", "timestamp": 1794357000000, "politica_cancel": "Recuerda que debes cancelar con mínimo 24 horas…", "disponible": 18}
+      ]
+    },
+    {
+      "fecha": "2026-11-09", "texto": "Lunes 9 de Noviembre", "dia_semana": 1,
+      "timestamp": 1794250275261, "date": "2026-11-09T18:51:15.261Z",
+      "horas": [
+        {"id": 7, "nombre": "3:00 pm - 4:30 pm", "hora": "15:00:00", "nombre_corto": "3:00pm", "marca_tiempo": "2026-11-09T15:00:00", "timestamp": 1794254400000, "politica_cancel": "Esta clase ya no es posible cancelarla.", "disponible": 0},
+        {"id": 8, "nombre": "4:30 pm - 6:00 pm", "hora": "16:30:00", "nombre_corto": "4:30pm", "marca_tiempo": "2026-11-09T16:30:00", "timestamp": 1794259800000, "politica_cancel": "Esta clase ya no es posible cancelarla.", "disponible": 2},
+        {"id": 9, "nombre": "6:00 pm - 7:30 pm", "hora": "18:00:00", "nombre_corto": "6:00pm", "marca_tiempo": "2026-11-09T18:00:00", "timestamp": 1794265200000, "politica_cancel": "Esta clase ya no es posible cancelarla.", "disponible": 5},
+        {"id": 10, "nombre": "7:30 pm - 9:00 pm", "hora": "19:30:00", "nombre_corto": "7:30pm", "marca_tiempo": "2026-11-09T19:30:00", "timestamp": 1794270600000, "politica_cancel": "Esta clase ya no es posible cancelarla.", "disponible": 9}
+      ]
+    }
+  ]
+}

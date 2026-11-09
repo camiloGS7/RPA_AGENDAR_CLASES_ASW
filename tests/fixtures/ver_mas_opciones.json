@@ -1,0 +1,14 @@
+{
+  "tema": {
+    "id": 2563, "curso_id": 17, "nombre": "1-2-3  / UNIT 1", "orden": 5,
+    "tipo_clase": "regular", "tipo": "regular_17", "programable": 1, "activo": 1,
+    "unidad": "UNIT 1", "class_topic": "Warm Up: Getting to know you"
+  },
+  "horarios": {
+    "fecha": "2026-11-11", "texto": "Miércoles 11 de Noviembre", "dia_semana": 3,
+    "timestamp": 1794423075261, "date": "2026-11-11T18:51:15.261Z",
+    "horas": [
+      {"id": 1, "nombre": "6:00 am - 7:30 am", "hora": "06:00:00", "nombre_corto": "6:00am", "marca_tiempo": "2026-11-11T06:00:00", "timestamp": 1794394800000, "politica_cancel": "Recuerda que debes cancelar con mínimo 24 horas…", "disponible": 18}
+    ]
+  }
+}

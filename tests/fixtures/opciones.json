@@ -1,0 +1,6 @@
+[
+  {"text": "Clase", "value": "clase", "predeterminada": true,
+   "min_date": "2026-11-09T00:00:00", "max_date": "2026-11-09T04:40:00"},
+  {"text": "Tutoría", "value": "tutoria", "predeterminada": false,
+   "min_date": "2026-11-09T00:00:00", "max_date": "2026-11-09T04:40:00"}
+]

@@ -3,7 +3,8 @@
 Bot en Python que agenda automáticamente clases de inglés en la plataforma
 Blocks de American School Way (ASW) cuando se abre la programación diaria.
 
-Estado: **Fase 0 (andamiaje)**. Todavía no hace ninguna petición a la API.
+Estado: **Fase 1 (modelos y cliente HTTP)**. El cliente está probado contra una
+API simulada; todavía no se ha hecho ninguna petición a la API real.
 
 ## Requisitos
 
