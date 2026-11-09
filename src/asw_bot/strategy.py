@@ -16,7 +16,7 @@ from dataclasses import dataclass
 from enum import StrEnum
 
 from asw_bot.config import ASW_MAX_CLASSES_PER_DAY, Settings
-from asw_bot.models import Disponibilidad, Reserva
+from asw_bot.models import Disponibilidad, MasOpciones, Reserva
 
 # ASW rule: a block can be scheduled up to one hour before it starts.
 MIN_LEAD_TIME = dt.timedelta(hours=1)
@@ -208,6 +208,31 @@ def build_plan(
         intentos=intentos,
         evaluations=tuple(evaluations),
     )
+
+
+def accept_second_option(
+    mas: MasOpciones,
+    intento: Intento,
+    preferencias: Preferences,
+    reservas_existentes: Sequence[Reserva],
+) -> dt.date | None:
+    """Date offered by ``ver_mas_opciones`` if booking it respects the preferences.
+
+    The offer is for another day, so that day gets the same checks as a target
+    day: seats, weekday, daily cap and no class already at that hour.
+    """
+    day = mas.horarios
+    slot = day.slot(intento.hora)
+    if slot is None or not slot.has_seats:
+        return None
+    if day.weekday not in preferencias.target_weekdays:
+        return None
+    booked = [r for r in reservas_existentes if r.booked_date == day.fecha]
+    if len(booked) >= min(preferencias.max_classes_per_day, ASW_MAX_CLASSES_PER_DAY):
+        return None
+    if intento.hora in {r.booked_time for r in booked}:
+        return None
+    return day.fecha
 
 
 def plan_bookings(

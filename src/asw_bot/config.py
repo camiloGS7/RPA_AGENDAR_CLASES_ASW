@@ -35,9 +35,13 @@ class Settings(BaseSettings):
     http2: bool = False
 
     # Booking preferences. NoDecode: these are comma-separated, not JSON.
-    target_hours: Annotated[tuple[dt.time, ...], NoDecode] = (dt.time(6, 0), dt.time(7, 30))
+    target_hours: Annotated[tuple[dt.time, ...], NoDecode] = (
+        dt.time(7, 30),
+        dt.time(9, 0),
+        dt.time(10, 30),
+    )
     target_weekdays: Annotated[tuple[int, ...], NoDecode] = (1, 2, 3, 4, 5)
-    max_classes_per_day: int = Field(default=1, ge=1, le=ASW_MAX_CLASSES_PER_DAY)
+    max_classes_per_day: int = Field(default=3, ge=1, le=ASW_MAX_CLASSES_PER_DAY)
     allow_second_option: bool = False
 
     # Opening window.

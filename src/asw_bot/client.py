@@ -14,6 +14,7 @@ Nothing here logs request bodies, response bodies or the Authorization header.
 import asyncio
 import datetime as dt
 import time
+from collections.abc import Callable
 from dataclasses import dataclass
 from types import TracebackType
 from typing import Any, Self
@@ -61,6 +62,21 @@ class ApiResponse:
     rtt_ms: float
 
 
+@dataclass(frozen=True, slots=True)
+class RequestRecord:
+    """Timing and outcome of one HTTP call, for listeners. Never carries bodies."""
+
+    endpoint: str
+    attempt: int
+    rtt_ms: float
+    status: int | None
+    error: str | None
+    server_date: str | None
+
+
+RequestListener = Callable[[RequestRecord], None]
+
+
 def _retry_read(exc: BaseException) -> bool:
     """Reads are idempotent: any server or network failure may be retried."""
     return isinstance(exc, ServerError | NetworkError)
@@ -101,6 +117,18 @@ def _parse_object(data: Any, endpoint: str) -> dict[str, Any]:
     return data
 
 
+def _booking_result(data: Any) -> AgendarResult:
+    """Wrap whatever ``agendar`` returned on success.
+
+    Success is defined as "no error key", and the real body is not captured
+    yet. If it turns out not to be an object, the booking still happened, so
+    this must not raise: the value is kept under ``mensaje``.
+    """
+    if isinstance(data, dict):
+        return _parse(AgendarResult, data, "agendar")
+    return AgendarResult(mensaje=data)
+
+
 def _fmt_hora(hora: dt.time) -> str:
     return hora.strftime("%H:%M:%S")
 
@@ -121,6 +149,7 @@ class AswClient:
         *,
         max_retries: int = 2,
         retry_wait_s: float = 0.4,
+        transport: httpx.AsyncBaseTransport | None = None,
     ) -> None:
         self._settings = settings
         self._store = token_store
@@ -128,11 +157,14 @@ class AswClient:
         self._retry_wait_s = retry_wait_s
         self._token: str | None = None
         self._login_lock = asyncio.Lock()
+        self._listeners: list[RequestListener] = []
         self._http = httpx.AsyncClient(
             base_url=settings.asw_base_url,
             timeout=httpx.Timeout(READ_TIMEOUT_S, connect=CONNECT_TIMEOUT_S),
             headers={"Accept": "application/json", "Content-Type": "application/json"},
             http2=settings.http2,
+            # Tests plug the mock server in here to run without sockets.
+            transport=transport,
         )
 
     def __repr__(self) -> str:
@@ -154,16 +186,28 @@ class AswClient:
     async def aclose(self) -> None:
         await self._http.aclose()
 
+    def add_listener(self, listener: RequestListener) -> None:
+        """Be told about every HTTP round trip (timeline, event log, clock sync)."""
+        self._listeners.append(listener)
+
+    def _notify(self, record: RequestRecord) -> None:
+        for listener in self._listeners:
+            listener(record)
+
     # --- read endpoints ---------------------------------------------------
 
     async def opciones(self) -> list[Opcion]:
         """Lock window. The opening time is ``max_date`` of the "clase" option."""
         return _parse_list(Opcion, await self._post("opciones", {}), "opciones")
 
-    async def ver_disponibilidad(self) -> Disponibilidad:
-        """Next topic and free seats for the visible days. Sent without a body."""
+    async def ver_disponibilidad(self, *, retry: bool = True) -> Disponibilidad:
+        """Next topic and free seats for the visible days. Sent without a body.
+
+        Pass ``retry=False`` when polling: the next poll is the retry, and an
+        automatic one would break the pacing of one request per interval.
+        """
         endpoint = "ver_disponibilidad"
-        return _parse(Disponibilidad, await self._post(endpoint), endpoint)
+        return _parse(Disponibilidad, await self._post(endpoint, retry=retry), endpoint)
 
     async def ver_mas_opciones(self, tema_id: int, fecha: dt.date, hora: dt.time) -> MasOpciones:
         """Same hour on the next working day (the app's "Más opciones")."""
@@ -194,7 +238,7 @@ class AswClient:
             # The app has a bug that always overwrites this value; we mirror it.
             "tipo_solicitud": "normal",
         }
-        return _parse(AgendarResult, await self._post("agendar", body), "agendar")
+        return _booking_result(await self._post("agendar", body))
 
     async def agendar_segunda_opcion(
         self, tema_id: int, dia: dt.date, hora: dt.time
@@ -208,7 +252,7 @@ class AswClient:
             "tipo_solicitud": "normal",
             "segunda_opcion": True,
         }
-        return _parse(AgendarResult, await self._post("agendar", body), "agendar")
+        return _booking_result(await self._post("agendar", body))
 
     async def cancelar(self, agendamiento_id: int) -> Any:
         """Cancel a booking by the ``id`` that ``clases`` reports."""
@@ -264,7 +308,9 @@ class AswClient:
 
     # --- transport --------------------------------------------------------
 
-    async def _post(self, endpoint: str, body: dict[str, Any] | None = None) -> Any:
+    async def _post(
+        self, endpoint: str, body: dict[str, Any] | None = None, *, retry: bool = True
+    ) -> Any:
         """POST with auth, one relogin on 401, and retries where they are safe."""
         write = endpoint in WRITE_ENDPOINTS
         if write and self._settings.dry_run:
@@ -273,7 +319,7 @@ class AswClient:
 
         relogged = False
         retrying = AsyncRetrying(
-            stop=stop_after_attempt(self._max_retries + 1),
+            stop=stop_after_attempt(self._max_retries + 1 if retry else 1),
             wait=wait_exponential(multiplier=self._retry_wait_s),
             retry=retry_if_exception(_retry_write if write else _retry_read),
             reraise=True,
@@ -301,13 +347,11 @@ class AswClient:
             response = await self._http.post(endpoint, json=body, headers=headers)
         except httpx.TransportError as exc:
             cause = type(exc).__name__
+            failed_ms = round((time.perf_counter() - started) * 1000, 1)
             log.warning(
-                "http_error",
-                endpoint=endpoint,
-                attempt=attempt,
-                error=cause,
-                duration_ms=round((time.perf_counter() - started) * 1000, 1),
+                "http_error", endpoint=endpoint, attempt=attempt, error=cause, duration_ms=failed_ms
             )
+            self._notify(RequestRecord(endpoint, attempt, failed_ms, None, cause, None))
             raise NetworkError(
                 endpoint, cause, maybe_delivered=not isinstance(exc, _NOT_DELIVERED)
             ) from None
@@ -325,6 +369,11 @@ class AswClient:
             duration_ms=rtt_ms,
             attempt=attempt,
             server_date=response.headers.get("date"),
+        )
+        self._notify(
+            RequestRecord(
+                endpoint, attempt, rtt_ms, response.status_code, None, response.headers.get("date")
+            )
         )
         return ApiResponse(
             status=response.status_code,

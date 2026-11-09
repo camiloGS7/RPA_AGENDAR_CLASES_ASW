@@ -433,8 +433,8 @@ def test_preferences_come_from_settings() -> None:
 # --- the availability documented in the spec ---------------------------------
 
 
-def test_real_availability_books_tuesday_at_six() -> None:
-    """Monday 13:52, default preferences: the furthest day is Tuesday, 06:00 has 18 seats."""
+def test_real_availability_with_the_default_schedule() -> None:
+    """Monday 13:52, default schedule (07:30, 09:00, 10:30; three classes a day)."""
     disponibilidad = Disponibilidad.model_validate(load_fixture("ver_disponibilidad.json"))
     preferences = Preferences.from_settings(make_settings())
 
@@ -442,9 +442,11 @@ def test_real_availability_books_tuesday_at_six() -> None:
 
     assert plan.target_date == TUE
     assert plan.target_reason is TargetReason.FURTHEST_DAY
+    assert plan.remaining == 3
     assert [(i.hora, i.seats_seen) for i in plan.intentos] == [
-        (dt.time(6, 0), 18),
         (dt.time(7, 30), 15),
+        (dt.time(9, 0), 24),
+        (dt.time(10, 30), 34),
     ]
 
 

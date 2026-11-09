@@ -37,9 +37,9 @@ def main() -> None:
 
     scenarios = [
         (
-            "1. Preferencias por defecto (06:00, 07:30), sin foto previa",
+            "1. Tu horario (07:30, 09:00, 10:30; 3 clases por día), sin foto previa",
             full,
-            Preferences(hours("06:00", "07:30"), WEEKDAYS),
+            Preferences(hours("07:30", "09:00", "10:30"), WEEKDAYS, max_classes_per_day=3),
             None,
         ),
         (
@@ -61,9 +61,9 @@ def main() -> None:
             None,
         ),
         (
-            "5. Con foto previa {lunes}: el martes es el día nuevo",
+            "5. Tu horario con foto previa {lunes}: el martes es el día nuevo",
             full,
-            Preferences(hours("06:00", "07:30"), WEEKDAYS),
+            Preferences(hours("07:30", "09:00", "10:30"), WEEKDAYS, max_classes_per_day=3),
             {MONDAY},
         ),
     ]

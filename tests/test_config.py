@@ -17,9 +17,13 @@ def test_env_example_is_loadable_as_is() -> None:
 
     assert settings.asw_base_url == "https://blocks.asw.edu.co/api/student/"
     # Inline comments in the file must not leak into the values.
-    assert settings.target_hours == (dt.time(6, 0), dt.time(7, 30))
+    assert settings.target_hours == (dt.time(7, 30), dt.time(9, 0), dt.time(10, 30))
     assert settings.target_weekdays == (1, 2, 3, 4, 5)
-    assert settings.max_classes_per_day == 1
+    assert settings.max_classes_per_day == 3
+    # The example file and the code defaults describe the same schedule.
+    defaults = Settings(_env_file=None)
+    assert settings.target_hours == defaults.target_hours
+    assert settings.max_classes_per_day == defaults.max_classes_per_day
     assert settings.allow_second_option is False
     assert settings.poll_interval_ms == 400
     assert settings.poll_start_offset_ms == -3000
