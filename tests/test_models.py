@@ -177,6 +177,22 @@ def test_reserva_date_is_best_effort(fecha: object, expected: dt.date | None) ->
     assert reserva.booked_date == expected
 
 
+@pytest.mark.parametrize(
+    ("hora", "expected"),
+    [
+        ("06:00:00", dt.time(6, 0)),
+        ("19:30", dt.time(19, 30)),
+        ("06:00:00.000", dt.time(6, 0)),
+        ("6am", None),
+        (None, None),
+        (600, None),
+    ],
+)
+def test_reserva_time_is_best_effort(hora: object, expected: dt.time | None) -> None:
+    reserva = Reserva.model_validate({"id": 99, "hora": hora})
+    assert reserva.booked_time == expected
+
+
 def test_agendar_result_accepts_the_deduced_shape() -> None:
     result = AgendarResult.model_validate(
         {"fecha": "2026-11-10", "hora": "06:00:00", "mensaje": "Programación exitosa"}

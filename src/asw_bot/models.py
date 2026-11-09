@@ -186,6 +186,16 @@ class Reserva(ApiModel):
         except ValueError:
             return None
 
+    @property
+    def booked_time(self) -> dt.time | None:
+        """Best-effort start time of the booking, or None if ``hora`` is not time-like."""
+        if not isinstance(self.hora, str):
+            return None
+        try:
+            return dt.time.fromisoformat(self.hora[:8])
+        except ValueError:
+            return None
+
 
 class AgendarResult(ApiModel):
     """Success body of ``agendar``. Format deduced, not yet captured for real."""

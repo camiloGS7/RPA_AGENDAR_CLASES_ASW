@@ -3,8 +3,9 @@
 Bot en Python que agenda automáticamente clases de inglés en la plataforma
 Blocks de American School Way (ASW) cuando se abre la programación diaria.
 
-Estado: **Fase 1 (modelos y cliente HTTP)**. El cliente está probado contra una
-API simulada; todavía no se ha hecho ninguna petición a la API real.
+Estado: **Fase 2 (estrategia)**. El cliente y la lógica de decisión están
+probados contra datos simulados; todavía no se ha hecho ninguna petición a la
+API real.
 
 ## Requisitos
 
@@ -34,6 +35,7 @@ y nunca debe subirse al repositorio.
 | `uv run pytest` | Pruebas y cobertura (mínimo 85 %) |
 | `uv run pytest -m live` | Pruebas de solo lectura contra la API real |
 | `uv run python scripts/show_tree.py` | Árbol del proyecto |
+| `uv run python scripts/show_plan.py` | Qué reservaría el bot y por qué (`reports/estrategia.html`) |
 
 ## Estructura
 
