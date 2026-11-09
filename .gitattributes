@@ -1,0 +1,2 @@
+# Developed on Windows, deployed on Linux: keep LF everywhere.
+* text=auto eol=lf

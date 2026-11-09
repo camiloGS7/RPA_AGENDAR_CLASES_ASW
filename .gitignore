@@ -1,0 +1,29 @@
+# Secrets: never commit credentials or tokens
+.env
+.env.*
+!.env.example
+token*
+# ...but the module that manages the token is source code, not a secret
+!src/asw_bot/token_store.py
+
+# Generated output
+reports/
+data/
+*.db
+*.jsonl
+
+# Python
+.venv/
+__pycache__/
+*.py[cod]
+*.egg-info/
+dist/
+build/
+
+# Tool caches
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+.coverage.*
+htmlcov/
